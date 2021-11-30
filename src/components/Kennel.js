@@ -29,5 +29,6 @@ export const Kennel = () => {
         <Route path="/register">
             <Register />
         </Route>
+        
     </>
 }

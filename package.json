@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "bootstrap": "^4.4.1",
-    "nss-json-server": "^1.0.5",
+    "nss-json-server": "^1.1.0",
     "raw-loader": "^4.0.0",
     "react-modal": "^3.11.1",
     "react-router-dom": "^5.2.1",

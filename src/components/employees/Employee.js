@@ -6,19 +6,28 @@ import useSimpleAuth from "../../hooks/ui/useSimpleAuth";
 import person from "./person.png"
 import "./Employee.css"
 
+// lz-issue 10 & 2 in this module. Line 29-32 useEffect is for issue 2 so that the browser knows that the person logged in is an employee. Line 71-80 JSX is a ternary statement that only shows the button when the user is an employee and shows an empty string when the user is a pet owner. The onClick is to delete the employee from the database and the setEmployee function is to rerender the page to show the current employees.  
 
-export default ({ employee }) => {
+export default ({ employee, setEmployees }) => {
     const [animalCount, setCount] = useState(0)
     const [location, markLocation] = useState({ name: "" })
     const [classes, defineClasses] = useState("card employee")
     const { employeeId } = useParams()
     const { getCurrentUser } = useSimpleAuth()
     const { resolveResource, resource } = useResourceResolver()
+    const [isEmployee, setAuth] = useState(false)
+   
+
 
     useEffect(() => {
         if (employeeId) {
             defineClasses("card employee--single")
         }
+        resolveResource(employee, employeeId, EmployeeRepository.get)
+    }, [])
+
+    useEffect(() => {
+        setAuth(getCurrentUser().employee)
         resolveResource(employee, employeeId, EmployeeRepository.get)
     }, [])
 
@@ -58,12 +67,21 @@ export default ({ employee }) => {
                         </>
                         : ""
                 }
-
                 {
-                    <button className="btn--fireEmployee" onClick={() => {}}>Fire</button>
+                    isEmployee
+                    ?
+                    <button className="btn--fireEmployee" onClick={() => {
+                        EmployeeRepository.delete(resource.id)
+                        .then(()=>{
+                          EmployeeRepository.getAll()
+                          .then(setEmployees)
+                        })
+                    }}>Fire</button>
+                    :""
                 }
-
-            </section>
+                
+                    
+                    </section>
 
         </article>
     )
