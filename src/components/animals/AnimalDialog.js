@@ -17,7 +17,7 @@ export const AnimalDialog = ({ toggleDialog, animal, setCurrentAnimal }) => {
 
                 
             }
-            <input type="text" onChange={evt => setTreatment(evt.target.value)} placeholder="Add new treatment"/>
+            <input type="text" id="treatmentText" onChange={evt => setTreatment(evt.target.value)} placeholder="Add new treatment"/>
             <button id="submitTreatment" onClick={()=> {
                 const newTreatment= {
                     animalId: animal?.id,
@@ -29,7 +29,7 @@ export const AnimalDialog = ({ toggleDialog, animal, setCurrentAnimal }) => {
                     AnimalRepository.get(animal?.id)
                     .then(setCurrentAnimal)
                 })
-                
+                document.getElementById("treatmentText").value = ""
                 
             }}>Submit</button>
             <button style={{
