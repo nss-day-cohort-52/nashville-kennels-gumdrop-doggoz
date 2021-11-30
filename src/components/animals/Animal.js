@@ -18,17 +18,24 @@ export const Animal = ({ animal, syncAnimals,
     const history = useHistory()
     const { animalId } = useParams()
     const { resolveResource, resource: currentAnimal } = useResourceResolver()
+    const [users, setUsers] = useState([])
 
     useEffect(() => {
         setAuth(getCurrentUser().employee)
         resolveResource(animal, animalId, AnimalRepository.get)
     }, [])
 
+  
     useEffect(() => {
         if (owners) {
             registerOwners(owners)
         }
     }, [owners])
+
+    useEffect(() => {
+        OwnerRepository.getAll()
+        .then(setUsers)
+    }, [])
 
     const getPeople = () => {
         return AnimalOwnerRepository
@@ -91,12 +98,24 @@ export const Animal = ({ animal, syncAnimals,
                             <h6>Owners</h6>
                             <span className="small">
 
-                                
-                                
+                                {/* mapping through animalOwners array in resource (currentAnimal) and filtering any user.id that = current animal owner id
+                                map through found animal owners and return the id and name */}
 
+                            {
+                                    currentAnimal?.animalOwners?.map(owner => {
+                                        const foundAnimalOwner = users.filter(user => {
+                                            return user.id === owner.userId
+                                        })
+                                        return (
+                                            foundAnimalOwner.map(fao => {
+                                                return <div key={fao.id}>{fao.name}</div>
+                                            })
+                                        )
+                                    })
+                                }
 
                             </span>
-                           
+
 
                             {
                                 myOwners.length < 2
