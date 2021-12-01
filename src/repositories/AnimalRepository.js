@@ -50,6 +50,13 @@ export default {
             JSON.stringify(newAnimal)
         )
     },
+    async addTreatment(newTreatment) {
+        return await fetchIt(
+            `${Settings.remoteURL}/treatments`,
+            "POST",
+            JSON.stringify(newTreatment)
+        )
+    },
     async updateAnimal(editedAnimal) {
         return await fetchIt(
             `${Settings.remoteURL}/animals/${editedAnimal.id}`,
