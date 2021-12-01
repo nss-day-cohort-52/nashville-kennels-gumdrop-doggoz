@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useParams, useHistory } from "react-router-dom"
 import EmployeeRepository from "../../repositories/EmployeeRepository";
 import useResourceResolver from "../../hooks/resource/useResourceResolver";
 import useSimpleAuth from "../../hooks/ui/useSimpleAuth";
@@ -16,6 +16,7 @@ export default ({ employee, setEmployees }) => {
     const { getCurrentUser } = useSimpleAuth()
     const { resolveResource, resource } = useResourceResolver()
     const [isEmployee, setAuth] = useState(false)
+    const history = useHistory()
    
 
 
@@ -75,6 +76,9 @@ export default ({ employee, setEmployees }) => {
                         .then(()=>{
                           EmployeeRepository.getAll()
                           .then(setEmployees)
+                          .then(()=> {
+                              history.push("/employees")
+                          })
                         })
                     }}>Fire</button>
                     :""

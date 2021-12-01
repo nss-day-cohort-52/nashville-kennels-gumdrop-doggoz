@@ -15,27 +15,33 @@ export const NavBar = () => {
     const history = useHistory()
 
     const search = (e) => {
+        //if the user hits enter
         if (e.keyCode === 13) {
-            const terms = document.querySelector("#searchTerms").value
+            //set the searchTerms using the value of the search box
+            setTerms(document.querySelector("#searchTerms").value)
             const foundItems = {
                 animals: [],
                 locations: [],
                 employees: []
             }
-
-            fetch(`${Settings.remoteURL}/users?employee=true&name_like=${encodeURI(terms)}`)
+            //fetch filtered employees and store in founditems
+            fetch(`${Settings.remoteURL}/users?employee=true&name_like=${encodeURI(searchTerms)}`)
                 .then(r => r.json())
                 .then(employees => {
                     foundItems.employees = employees
-                    return LocationRepository.search(terms)
+                    //fetch filtered Locations then store in foundItems
+                    return LocationRepository.search(searchTerms)
                 })
                 .then(locations => {
                     foundItems.locations = locations
-                    return AnimalRepository.searchByName(encodeURI(terms))
+                    //fetch filtered animals then store in foundItems
+                    return AnimalRepository.searchByName(encodeURI(searchTerms))
                 })
                 .then(animals => {
                     foundItems.animals = animals
+                    //reset searchTerms state
                     setTerms("")
+                    //push user to new page and pass the foundItems state to the location
                     history.push({
                         pathname: "/search",
                         state: foundItems
@@ -43,6 +49,7 @@ export const NavBar = () => {
                 })
         }
         else {
+            //if the key the user enters is not "enter", update the searchTerms value
             setTerms(e.target.value)
         }
     }
