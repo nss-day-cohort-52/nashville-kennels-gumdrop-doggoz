@@ -25,3 +25,4 @@ export default {
         return await fetchIt(`${Settings.remoteURL}/users?employee=true&_embed=employeeLocations`)
     }
 }
+
