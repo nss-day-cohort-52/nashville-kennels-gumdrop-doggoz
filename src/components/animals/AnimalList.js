@@ -47,38 +47,63 @@ export const AnimalListComponent = (props) => {
 
         return () => window.removeEventListener("keyup", handler)
     }, [toggleDialog, modalIsOpen])
-
-
-    return (
-        <>
-            <AnimalDialog toggleDialog={toggleDialog} animal={currentAnimal} setCurrentAnimal={setCurrentAnimal} />
-
-
-            {
-                getCurrentUser().employee
-                    ? ""
-                    : <div className="centerChildren btn--newResource">
-                        <button type="button"
-                            className="btn btn-success "
-                            onClick={() => { history.push("/animals/new") }}>
-                            Register Animal
-                        </button>
-                    </div>
-            }
-
-
-            <ul className="animals">
-                {
-                    animals.map(anml =>
-                        <Animal key={`animal--${anml.id}`} animal={anml}
-                            animalOwners={animalOwners}
-                            owners={owners}
-                            syncAnimals={syncAnimals}
-                            setAnimalOwners={setAnimalOwners}
-                            showTreatmentHistory={showTreatmentHistory}
-                        />)
+    
+    
+    const ownersAnimals = () => {
+        const user = getCurrentUser()
+        
+        const foundArray = animals.filter((anml) => {
+            let boolean = false
+            for (const animalOwner of anml.animalOwners){
+                if(animalOwner.userId === user.id){
+                    boolean = true
                 }
-            </ul>
-        </>
-    )
-}
+            }
+            return boolean
+        }
+         )
+        return foundArray
+    }
+
+        return (
+            <>
+                <AnimalDialog toggleDialog={toggleDialog} animal={currentAnimal} setCurrentAnimal={setCurrentAnimal} />
+
+
+                {
+                    getCurrentUser().employee
+                        ? ""
+                        : <div className="centerChildren btn--newResource">
+                            <button type="button"
+                                className="btn btn-success "
+                                onClick={() => { history.push("/animals/new") }}>
+                                Register Animal
+                            </button>
+                        </div>
+                }
+
+
+                <ul className="animals">
+                    {
+                        getCurrentUser().employee
+                            ? animals.map(anml =>
+                                <Animal key={`animal--${anml.id}`} animal={anml}
+                                    animalOwners={animalOwners}
+                                    owners={owners}
+                                    syncAnimals={syncAnimals}
+                                    setAnimalOwners={setAnimalOwners}
+                                    showTreatmentHistory={showTreatmentHistory}
+                                />)
+                            : ownersAnimals().map(anml =>
+                                <Animal key={`animal--${anml.id}`} animal={anml}
+                                    animalOwners={animalOwners}
+                                    owners={owners}
+                                    syncAnimals={syncAnimals}
+                                    setAnimalOwners={setAnimalOwners}
+                                    showTreatmentHistory={showTreatmentHistory}
+                                />)
+                    }
+                </ul>
+            </>
+        )
+                }
