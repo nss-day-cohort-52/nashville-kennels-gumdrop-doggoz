@@ -5,6 +5,7 @@ import AnimalRoutes from "./AnimalRoutes"
 import EmployeeRoutes from "./EmployeeRoutes"
 import LocationRoutes from "./LocationRoutes"
 import SearchResults from "./search/SearchResults"
+import EmployeeForm from "./employees/EmployeeForm"
 
 
 export default () => {
@@ -13,6 +14,12 @@ export default () => {
             <LocationRoutes />
             <AnimalRoutes />
             <EmployeeRoutes />
+
+
+            <Route exact path="/employeeForm">
+                {/* child */}
+                <EmployeeForm />
+            </Route>
 
             <Route path="/search">
                 <SearchResults />
