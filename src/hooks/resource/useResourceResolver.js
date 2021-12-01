@@ -14,7 +14,7 @@ const useResourceResolver = () => {
             setResource(property)
         }
         else {
-            // If being rendered indepedently
+            // If being rendered indepedently (ROUTE PARAMETER)
             if (param) {
                 getter(param).then(retrievedResource => {
                     setResource(retrievedResource)
