@@ -114,7 +114,7 @@ export const Animal = ({ animal, syncAnimals,
                             <h6>Owners</h6>
                             <span className="small">
 
-                                {/* mapping through animalOwners array in resource (currentAnimal) and filtering any user.id that = current animal owner id
+                                {/* mapping through animalOwners array in resource and filtering any user.id that = current animal owner id
                                 map through found animal owners and return the id and name */}
 
                                 {
