@@ -39,7 +39,6 @@ export const NavBar = () => {
                 })
                 .then(animals => {
                     foundItems.animals = animals
-                    //reset searchTerms state
                     setTerms("")
                     //push user to new page and pass the foundItems state to the location
                     history.push({
