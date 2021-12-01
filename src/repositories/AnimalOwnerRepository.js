@@ -37,6 +37,7 @@ export default {
         const e = await fetch(`${Settings.remoteURL}/animalOwners?animalId=${animalId}&_expand=user`)
         return await e.json()
     },
+    
     async assignOwner(animalId, userId) {
         const e = await fetch(`${Settings.remoteURL}/animalOwners`, {
             "method": "POST",

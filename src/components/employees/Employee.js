@@ -60,10 +60,16 @@ export default ({ employee, setEmployees }) => {
                     employeeId
                         ? <>
                             <section>
-                                Caring for 0 animals
+                                {/* getting the amount (.length) of animals connected to resource (employee) */}
+                                Caring for {resource?.animals?.length} animal(s)
                             </section>
                             <section>
-                                Working at unknown location
+                                {/* mapping locations of resource (employee) and returning the location name */}
+                                Working at {resource?.locations?.map(emplocation => {
+                                    return <p key={emplocation.location.id}> {emplocation.location.name}</p>
+                                })}
+                                
+
                             </section>
                         </>
                         : ""
@@ -83,9 +89,9 @@ export default ({ employee, setEmployees }) => {
                     }}>Fire</button>
                     :""
                 }
-                
-                    
-                    </section>
+
+
+            </section>
 
         </article>
     )
