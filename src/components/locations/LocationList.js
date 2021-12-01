@@ -4,7 +4,7 @@ import Location from "./Location"
 import "./LocationList.css"
 
 
-export const LocationList = () => {
+export const LocationList = ({matchingLocations}) => {
     const [ locations, updateLocations ] = useState([])
 
     useEffect(() => {
@@ -12,9 +12,17 @@ export const LocationList = () => {
         .then(updateLocations)
     }, [])
 
+    useEffect(() => {
+        if(matchingLocations){
+            updateLocations(matchingLocations)
+        }
+    }, [matchingLocations])
+
     return (
         <div className="locations">
-            {locations.map(l => <Location key={l.id} location={l} />)}
+            {
+                locations.map(l => <Location key={l.id} location={l} />)
+            }
         </div>
     )
 }
