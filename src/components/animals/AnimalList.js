@@ -51,7 +51,7 @@ export const AnimalListComponent = (props) => {
 
     return (
         <>
-            <AnimalDialog toggleDialog={toggleDialog} animal={currentAnimal} />
+            <AnimalDialog toggleDialog={toggleDialog} animal={currentAnimal} setCurrentAnimal={setCurrentAnimal} />
 
 
             {
