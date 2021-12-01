@@ -25,6 +25,11 @@ export const Animal = ({ animal, syncAnimals,
         // setter (property, param, getter) .get is expanding to users table
         resolveResource(animal, animalId, AnimalRepository.get)
     }, [])
+    useEffect(() => {
+
+        // setter (property, param, getter) .get is expanding to users table
+        resolveResource(animal, animalId, AnimalRepository.get)
+    }, [myOwners])
 
 
     useEffect(() => {
@@ -47,7 +52,7 @@ export const Animal = ({ animal, syncAnimals,
 
     useEffect(() => {
         getPeople()
-    }, [currentAnimal])
+    }, [currentAnimal, animal])
 
     useEffect(() => {
         if (animalId) {
@@ -101,8 +106,8 @@ export const Animal = ({ animal, syncAnimals,
                                         return <div key={`taker--${animalCaretaker.id}`}>{animalCaretaker.user.name}</div>
 
 
-                                         }
-                                      )
+                                    }
+                                    )
                                 }
 
 
@@ -138,7 +143,12 @@ export const Animal = ({ animal, syncAnimals,
                                     ? <select defaultValue=""
                                         name="owner"
                                         className="form-control small"
-                                        onChange={() => { }} >
+                                        onChange={(evt) => {
+                                            AnimalOwnerRepository.assignOwner(currentAnimal.id, parseInt(evt.target.value))
+                                                .then(syncAnimals)
+                                            evt.target.value = ""
+
+                                        }} >
                                         <option value="">
                                             Select {myOwners.length === 1 ? "another" : "an"} owner
                                         </option>
@@ -180,7 +190,7 @@ export const Animal = ({ animal, syncAnimals,
                                         }) // Remove animal
                                         .then(() => {
                                             AnimalRepository.getAll()
-                                            .then(syncAnimals)
+                                                .then(syncAnimals)
                                         }) // Get all animals
                                 }>Discharge</button>
                                 : ""

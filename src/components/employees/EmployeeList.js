@@ -5,18 +5,24 @@ import "./EmployeeList.css"
 
 // For issue 10 I used the prop setEmployees on line 24 to transfer to the Employee.js module. 
 
-export default ({matchingEmployees}) => {
+export default ({ matchingEmployees }) => {
     const [emps, setEmployees] = useState([])
 
     useEffect(
         () => {
-            EmployeeRepository.getAll()
-            .then(setEmployees)
+            //on first page render, either render list of matching employees, or all employees
+            if (matchingEmployees) {
+                setEmployees(matchingEmployees)
+            } else {
+                EmployeeRepository.getAll()
+                    .then(setEmployees)
+            }
         }, []
     )
 
     useEffect(() => {
-        if(matchingEmployees){
+        //every subsequent time matchingEmployees changes (new search term typed), change state
+        if (matchingEmployees) {
             setEmployees(matchingEmployees)
         }
     }, [matchingEmployees])
@@ -29,7 +35,7 @@ export default ({matchingEmployees}) => {
         <>
             <div className="employees">
                 {
-                    emps.map(a => <Employee key={a.id} employee={a} setEmployees={setEmployees}/>)
+                    emps.map(a => <Employee key={a.id} employee={a} setEmployees={setEmployees} />)
                 }
             </div>
         </>
