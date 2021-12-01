@@ -18,17 +18,26 @@ export const Animal = ({ animal, syncAnimals,
     const history = useHistory()
     const { animalId } = useParams()
     const { resolveResource, resource: currentAnimal } = useResourceResolver()
+    const [users, setUsers] = useState([])
 
     useEffect(() => {
         setAuth(getCurrentUser().employee)
+        // setter (property, param, getter) .get is expanding to users table
         resolveResource(animal, animalId, AnimalRepository.get)
     }, [])
+
 
     useEffect(() => {
         if (owners) {
             registerOwners(owners)
         }
     }, [owners])
+
+    //getAll is coming from OwnerRepository component - fetching all users
+    useEffect(() => {
+        OwnerRepository.getAll()
+            .then(setUsers)
+    }, [])
 
     const getPeople = () => {
         return AnimalOwnerRepository
@@ -84,21 +93,52 @@ export const Animal = ({ animal, syncAnimals,
                         <section>
                             <h6>Caretaker(s)</h6>
                             <span className="small">
-                                Unknown
+                                {/* iterate through animalCaretakers array and return the user.name for each caretaker of currentAnimal  */}
+
+                                {
+                                    currentAnimal?.animalCaretakers?.map(animalCaretaker => {
+
+                                        return <div key={`taker--${animalCaretaker.id}`}>{animalCaretaker.user.name}</div>
+
+
+                                         }
+                                      )
+                                }
+
+
                             </span>
+
+
 
 
                             <h6>Owners</h6>
                             <span className="small">
-                                Owned by unknown
+
+                                {/* mapping through animalOwners array in resource and filtering any user.id that = current animal owner id
+                                map through found animal owners and return the id and name */}
+
+                                {
+                                    currentAnimal?.animalOwners?.map(owner => {
+                                        const foundAnimalOwner = users.filter(user => {
+                                            return user.id === owner.userId
+                                        })
+                                        return (
+                                            foundAnimalOwner.map(fao => {
+                                                return <div key={fao.id}>{fao.name}</div>
+                                            })
+                                        )
+                                    })
+                                }
+
                             </span>
+
 
                             {
                                 myOwners.length < 2
                                     ? <select defaultValue=""
                                         name="owner"
                                         className="form-control small"
-                                        onChange={() => {}} >
+                                        onChange={() => { }} >
                                         <option value="">
                                             Select {myOwners.length === 1 ? "another" : "an"} owner
                                         </option>
@@ -135,8 +175,13 @@ export const Animal = ({ animal, syncAnimals,
                                 ? <button className="btn btn-warning mt-3 form-control small" onClick={() =>
                                     AnimalOwnerRepository
                                         .removeOwnersAndCaretakers(currentAnimal.id)
-                                        .then(() => {}) // Remove animal
-                                        .then(() => {}) // Get all animals
+                                        .then(() => {
+                                            AnimalRepository.delete(currentAnimal.id)
+                                        }) // Remove animal
+                                        .then(() => {
+                                            AnimalRepository.getAll()
+                                            .then(syncAnimals)
+                                        }) // Get all animals
                                 }>Discharge</button>
                                 : ""
                         }

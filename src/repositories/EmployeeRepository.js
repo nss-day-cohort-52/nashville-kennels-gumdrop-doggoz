@@ -1,5 +1,6 @@
 import Settings from "./Settings"
 import { fetchIt } from "./Fetch"
+import { useImperativeHandle } from "react"
 
 export default {
     async get(id) {
@@ -11,6 +12,8 @@ export default {
                 userWithRelationships.animals = data
                 return userWithRelationships
             })
+
+        
     },
     async delete(id) {
         return await fetchIt(`${Settings.remoteURL}/users/${id}`, "DELETE")
