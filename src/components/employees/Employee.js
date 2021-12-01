@@ -16,7 +16,8 @@ export default ({ employee, setEmployees }) => {
     const { getCurrentUser } = useSimpleAuth()
     const { resolveResource, resource } = useResourceResolver()
     const [isEmployee, setAuth] = useState(false)
-   
+    
+
 
 
     useEffect(() => {
@@ -59,29 +60,35 @@ export default ({ employee, setEmployees }) => {
                     employeeId
                         ? <>
                             <section>
-                                Caring for 0 animals
+                                {/* getting the amount (.length) of animals connected to resource (employee) */}
+                                Caring for {resource?.animals?.length} animal(s)
                             </section>
                             <section>
-                                Working at unknown location
+                                {/* mapping locations of resource (employee) and returning the location name */}
+                                Working at {resource?.locations?.map(emplocation => {
+                                    return <p key={emplocation.location.id}> {emplocation.location.name}</p>
+                                })}
+                                
+
                             </section>
                         </>
                         : ""
                 }
                 {
                     isEmployee
-                    ?
-                    <button className="btn--fireEmployee" onClick={() => {
-                        EmployeeRepository.delete(resource.id)
-                        .then(()=>{
-                          EmployeeRepository.getAll()
-                          .then(setEmployees)
-                        })
-                    }}>Fire</button>
-                    :""
+                        ?
+                        <button className="btn--fireEmployee" onClick={() => {
+                            EmployeeRepository.delete(resource.id)
+                                .then(() => {
+                                    EmployeeRepository.getAll()
+                                        .then(setEmployees)
+                                })
+                        }}>Fire</button>
+                        : ""
                 }
-                
-                    
-                    </section>
+
+
+            </section>
 
         </article>
     )
