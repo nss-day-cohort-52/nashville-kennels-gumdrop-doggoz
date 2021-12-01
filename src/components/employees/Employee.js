@@ -12,11 +12,33 @@ export default ({ employee, setEmployees }) => {
     const [animalCount, setCount] = useState(0)
     const [location, markLocation] = useState({ name: "" })
     const [classes, defineClasses] = useState("card employee")
+    const [locationId, setNewLocation] = useState(0)
     const { employeeId } = useParams()
     const { getCurrentUser } = useSimpleAuth()
     const { resolveResource, resource } = useResourceResolver()
     const [isEmployee, setAuth] = useState(false)
     const history = useHistory()
+
+
+
+    const NewEmployeeLocation = evt => {
+        evt.preventDefault()
+        const lId = parseInt(locationId)
+
+        {
+            const loc = resource?.locations.find(l => l.id === lId)
+            const newLocation = {
+                
+                locationId: parseInt(loc.locationId)
+            }
+            
+            EmployeeRepository.assignEmployee(newLocation)
+            .then(() => history.push("/employees"))
+        }
+    }
+    
+    console.log(resource)
+
 
 
 
@@ -38,15 +60,9 @@ export default ({ employee, setEmployees }) => {
         }
     }, [resource])
 
-    const NewEmployeeLocation = () => {
-         {
-            EmployeeRepository.assignEmployee({
-                location: resource.employeeLocations.locationId,
-               
-            })            
-                .then(() => history.push("/employees"))
-        }
-    }
+
+
+
 
 
     return (
@@ -82,36 +98,31 @@ export default ({ employee, setEmployees }) => {
 
                             </section>
                             <section>
-
+{/* 
                                 <div className="form-group">
                                     <label htmlFor="location"></label>
-                                    <select value={location}
-
-                                    onChange={
-                                        (evt) => {
-                                            const copy = { ...resource }
-                                            copy.locationId = evt.target.value
-                                            resolveResource(copy)
-                                        }
-                                    }
+                                    <select
                                         defaultValue=""
                                         name="location"
-                                        className="form-control"
+                                        id="locationId"
+                                        
+                                        onChange={loc => setNewLocation(loc.target.value)}
                                     >
-                                        <option name="locations">Please Assign a Location</option>
-                                        <option name="locations">Nashville North</option>
-                                        <option name="locations">Nashville South</option>
-
-
-                                        ))
+                                        <option value="">Assign Location</option>
+                                        {locations.map(e => (
+                                            <option key={e.id} id={e.id} value={e.id}>
+                                                {e.name}
+                                            </option>
+                                        ))}
                                     </select>
-                                </div>
+                                </div> */}
                                 <button type="submit"
                                     onClick={
-                                        evt => {
-                                            evt.preventDefault()
+                                        () => {
+
                                             NewEmployeeLocation()
                                         }
+
                                     }
                                     className="btn-savelocation"> Save Location</button>
 
