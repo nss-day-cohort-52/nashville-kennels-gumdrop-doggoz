@@ -1,6 +1,7 @@
-import React, { useState, useContext } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import "./AnimalForm.css"
 import AnimalRepository from "../../repositories/AnimalRepository";
+import EmployeeRepository from "../../repositories/EmployeeRepository";
 
 
 export default (props) => {
@@ -10,6 +11,12 @@ export default (props) => {
     const [employees, setEmployees] = useState([])
     const [employeeId, setEmployeeId] = useState(0)
     const [saveEnabled, setEnabled] = useState(false)
+
+    useEffect(() => {
+        EmployeeRepository.getAll()
+        .then(setEmployees)
+    }, [])
+
 
     const constructNewAnimal = evt => {
         evt.preventDefault()
@@ -65,9 +72,28 @@ export default (props) => {
                     name="employee"
                     id="employeeId"
                     className="form-control"
-                    onChange={e => setEmployeeId(e.target.value)}
+                    onChange={e => setEmployeeId(e.target.value)
+                    }
                 >
                     <option value="">Select an employee</option>
+                    {employees.map(e => (
+                        <option key={e.id} id={e.id} value={e.id}>
+                            {e.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div className="form-group">
+                <label htmlFor="employee">Make an appointment at this location</label>
+                <select
+                    defaultValue=""
+                    name="employee"
+                    id="employeeId"
+                    className="form-control"
+                    onChange={e => setEmployeeId(e.target.value)
+                    }
+                >
+                    <option value="">Select a Location</option>
                     {employees.map(e => (
                         <option key={e.id} id={e.id} value={e.id}>
                             {e.name}
