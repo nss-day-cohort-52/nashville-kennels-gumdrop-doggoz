@@ -22,19 +22,21 @@ export const Animal = ({ animal, syncAnimals,
 
     useEffect(() => {
         setAuth(getCurrentUser().employee)
+        // setter (property, param, getter) .get is expanding to users table
         resolveResource(animal, animalId, AnimalRepository.get)
     }, [])
 
-  
+
     useEffect(() => {
         if (owners) {
             registerOwners(owners)
         }
     }, [owners])
 
+    //getAll is coming from OwnerRepository component - fetching all users
     useEffect(() => {
         OwnerRepository.getAll()
-        .then(setUsers)
+            .then(setUsers)
     }, [])
 
     const getPeople = () => {
@@ -91,8 +93,22 @@ export const Animal = ({ animal, syncAnimals,
                         <section>
                             <h6>Caretaker(s)</h6>
                             <span className="small">
-                                Unknown
+                                {/* iterate through animalCaretakers array and return the user.name for each caretaker of currentAnimal  */}
+
+                                {
+                                    currentAnimal?.animalCaretakers?.map(animalCaretaker => {
+
+                                        return <div key={`taker--${animalCaretaker.id}`}>{animalCaretaker.user.name}</div>
+
+
+                                         }
+                                      )
+                                }
+
+
                             </span>
+
+
 
 
                             <h6>Owners</h6>
@@ -101,7 +117,7 @@ export const Animal = ({ animal, syncAnimals,
                                 {/* mapping through animalOwners array in resource (currentAnimal) and filtering any user.id that = current animal owner id
                                 map through found animal owners and return the id and name */}
 
-                            {
+                                {
                                     currentAnimal?.animalOwners?.map(owner => {
                                         const foundAnimalOwner = users.filter(user => {
                                             return user.id === owner.userId
