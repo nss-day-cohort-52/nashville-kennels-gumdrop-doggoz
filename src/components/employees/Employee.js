@@ -76,17 +76,6 @@ export default ({ employee, setEmployees }) => {
                 }
                 {
                     isEmployee
-<<<<<<< HEAD
-                        ?
-                        <button className="btn--fireEmployee" onClick={() => {
-                            EmployeeRepository.delete(resource.id)
-                                .then(() => {
-                                    EmployeeRepository.getAll()
-                                        .then(setEmployees)
-                                })
-                        }}>Fire</button>
-                        : ""
-=======
                     ?
                     <button className="btn--fireEmployee" onClick={() => {
                         EmployeeRepository.delete(resource.id)
@@ -99,7 +88,6 @@ export default ({ employee, setEmployees }) => {
                         })
                     }}>Fire</button>
                     :""
->>>>>>> main
                 }
 
 
