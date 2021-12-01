@@ -5,17 +5,21 @@ import "./EmployeeList.css"
 
 // For issue 10 I used the prop setEmployees on line 24 to transfer to the Employee.js module. 
 
-export default () => {
+export default ({matchingEmployees}) => {
     const [emps, setEmployees] = useState([])
 
     useEffect(
         () => {
             EmployeeRepository.getAll()
-            .then(
-             setEmployees
-            )
+            .then(setEmployees)
         }, []
     )
+
+    useEffect(() => {
+        if(matchingEmployees){
+            setEmployees(matchingEmployees)
+        }
+    }, [matchingEmployees])
 
     return (
         <>

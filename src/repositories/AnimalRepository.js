@@ -22,6 +22,7 @@ export default {
         return await fetchIt(`${Settings.remoteURL}/animals/${id}?_embed=animalOwners&_embed=treatments&_embed=animalCaretakers`)
             .then(animal => {
                 animal = expandAnimalUser(animal, users)
+                console.log(animal)
                 return animal
             })
     },
@@ -37,6 +38,7 @@ export default {
             .then(data => {
                 const embedded = data.map(animal => {
                     animal = expandAnimalUser(animal, users)
+                    console.log(animal)
                     return animal
                 })
                 return embedded

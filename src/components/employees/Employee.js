@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useParams, useHistory } from "react-router-dom"
 import EmployeeRepository from "../../repositories/EmployeeRepository";
 import useResourceResolver from "../../hooks/resource/useResourceResolver";
 import useSimpleAuth from "../../hooks/ui/useSimpleAuth";
@@ -16,8 +16,8 @@ export default ({ employee, setEmployees }) => {
     const { getCurrentUser } = useSimpleAuth()
     const { resolveResource, resource } = useResourceResolver()
     const [isEmployee, setAuth] = useState(false)
-    
-
+    const history = useHistory()
+   
 
 
     useEffect(() => {
@@ -76,6 +76,7 @@ export default ({ employee, setEmployees }) => {
                 }
                 {
                     isEmployee
+<<<<<<< HEAD
                         ?
                         <button className="btn--fireEmployee" onClick={() => {
                             EmployeeRepository.delete(resource.id)
@@ -85,6 +86,20 @@ export default ({ employee, setEmployees }) => {
                                 })
                         }}>Fire</button>
                         : ""
+=======
+                    ?
+                    <button className="btn--fireEmployee" onClick={() => {
+                        EmployeeRepository.delete(resource.id)
+                        .then(()=>{
+                          EmployeeRepository.getAll()
+                          .then(setEmployees)
+                          .then(()=> {
+                              history.push("/employees")
+                          })
+                        })
+                    }}>Fire</button>
+                    :""
+>>>>>>> main
                 }
 
 
