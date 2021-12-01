@@ -17,7 +17,7 @@ export default ({ employee, setEmployees }) => {
     const { resolveResource, resource } = useResourceResolver()
     const [isEmployee, setAuth] = useState(false)
     const history = useHistory()
-   
+
 
 
     useEffect(() => {
@@ -37,6 +37,17 @@ export default ({ employee, setEmployees }) => {
             markLocation(resource.employeeLocations[0])
         }
     }, [resource])
+
+    const NewEmployeeLocation = () => {
+         {
+            EmployeeRepository.assignEmployee({
+                location: resource.employeeLocations.locationId,
+               
+            })            
+                .then(() => history.push("/employees"))
+        }
+    }
+
 
     return (
         <article className={classes}>
@@ -68,7 +79,44 @@ export default ({ employee, setEmployees }) => {
                                 Working at {resource?.locations?.map(emplocation => {
                                     return <p key={emplocation.location.id}> {emplocation.location.name}</p>
                                 })}
-                                
+
+                            </section>
+                            <section>
+
+                                <div className="form-group">
+                                    <label htmlFor="location"></label>
+                                    <select value={location}
+
+                                    onChange={
+                                        (evt) => {
+                                            const copy = { ...resource }
+                                            copy.locationId = evt.target.value
+                                            resolveResource(copy)
+                                        }
+                                    }
+                                        defaultValue=""
+                                        name="location"
+                                        className="form-control"
+                                    >
+                                        <option name="locations">Please Assign a Location</option>
+                                        <option name="locations">Nashville North</option>
+                                        <option name="locations">Nashville South</option>
+
+
+                                        ))
+                                    </select>
+                                </div>
+                                <button type="submit"
+                                    onClick={
+                                        evt => {
+                                            evt.preventDefault()
+                                            NewEmployeeLocation()
+                                        }
+                                    }
+                                    className="btn-savelocation"> Save Location</button>
+
+
+
 
                             </section>
                         </>
@@ -76,23 +124,23 @@ export default ({ employee, setEmployees }) => {
                 }
                 {
                     isEmployee
-                    ?
-                    <button className="btn--fireEmployee" onClick={() => {
-                        EmployeeRepository.delete(resource.id)
-                        .then(()=>{
-                          EmployeeRepository.getAll()
-                          .then(setEmployees)
-                          .then(()=> {
-                              history.push("/employees")
-                          })
-                        })
-                    }}>Fire</button>
-                    :""
+                        ?
+                        <button className="btn--fireEmployee" onClick={() => {
+                            EmployeeRepository.delete(resource.id)
+                                .then(() => {
+                                    EmployeeRepository.getAll()
+                                        .then(setEmployees)
+                                        .then(() => {
+                                            history.push("/employees")
+                                        })
+                                })
+                        }}>Fire</button>
+                        : ""
                 }
 
 
-            </section>
+            </section >
 
-        </article>
+        </article >
     )
 }
