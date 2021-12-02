@@ -19,6 +19,8 @@ export const Animal = ({ animal, syncAnimals,
     const { animalId } = useParams()
     const { resolveResource, resource: currentAnimal } = useResourceResolver()
     const [users, setUsers] = useState([])
+    const [caretakers, setCaretakers] = useState([])
+    const [myCaretaker, setMyCaretaker] = useState([])
 
     useEffect(() => {
         setAuth(getCurrentUser().employee)
@@ -43,15 +45,27 @@ export const Animal = ({ animal, syncAnimals,
         OwnerRepository.getAll()
             .then(setUsers)
     }, [])
+    useEffect(() => {
+        OwnerRepository.getAllEmployees()
+            .then(setCaretakers)
+    }, []
+
+    )
 
     const getPeople = () => {
         return AnimalOwnerRepository
             .getOwnersByAnimal(currentAnimal.id)
             .then(people => setPeople(people))
     }
+    const getCaretakers = () => {
+        return AnimalOwnerRepository
+            .getCaretakersByAnimal(currentAnimal.id)
+            .then(people => setMyCaretaker(people))
+    }
 
     useEffect(() => {
         getPeople()
+        getCaretakers()
     }, [currentAnimal, animal])
 
     useEffect(() => {
@@ -98,16 +112,55 @@ export const Animal = ({ animal, syncAnimals,
                         <section>
                             <h6>Caretaker(s)</h6>
                             <span className="small">
-                                {/* iterate through animalCaretakers array and return the user.name for each caretaker of currentAnimal  */}
-
                                 {
                                     currentAnimal?.animalCaretakers?.map(animalCaretaker => {
 
                                         return <div key={`taker--${animalCaretaker.id}`}>{animalCaretaker.user.name}</div>
-
-
                                     }
                                     )
+                                }
+                                {getCurrentUser().employee
+                                    ?
+                                    myCaretaker.length >= 1
+                                        ?
+                                        <button className="" onClick={() => {
+                                            AnimalOwnerRepository
+                                                .removeCaretakers(currentAnimal.id)
+                                                .then(() => {
+                                                    AnimalRepository.getAll()
+                                                        .then(syncAnimals)
+                                                }) // Get all animals
+                                        }}> Remove caretaker </button>
+                                        : ""
+                                    : ""
+                                }
+                                {/* iterate through animalCaretakers array and return the user.name for each caretaker of currentAnimal  */}
+                                {
+
+                                    getCurrentUser().employee
+                                        ?
+                                        myCaretaker.length < 1
+                                            ?
+                                            <select defaultValue=""
+                                                name="caretaker"
+                                                className="form-control small"
+                                                onChange={(evt) => {
+                                                    AnimalOwnerRepository.assignCaretaker(currentAnimal.id, parseInt(evt.target.value))
+                                                        .then(syncAnimals)
+                                                    evt.target.value = ""
+
+                                                }} >
+                                                <option value="">
+                                                    Select a new caretaker
+                                                </option>
+                                                {
+                                                    caretakers.map(ct => <option key={ct.id} value={ct.id}>{ct.name}</option>)
+                                                }
+                                            </select>
+
+                                            : ""
+                                        : ""
+
                                 }
 
 
