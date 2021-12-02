@@ -3,6 +3,7 @@ import { Link, useParams, useHistory } from "react-router-dom"
 import EmployeeRepository from "../../repositories/EmployeeRepository";
 import useResourceResolver from "../../hooks/resource/useResourceResolver";
 import useSimpleAuth from "../../hooks/ui/useSimpleAuth";
+import LocationRepository from "../../repositories/LocationRepository";
 import person from "./person.png"
 import "./Employee.css"
 
@@ -12,6 +13,8 @@ export default ({ employee, setEmployees }) => {
     const [animalCount, setCount] = useState(0)
     const [location, markLocation] = useState({ name: "" })
     const [classes, defineClasses] = useState("card employee")
+    const [newLocation, setLocations] = useState([])
+    const [locationId, setNewLocation] = useState(0)
     const { employeeId } = useParams()
     const { getCurrentUser } = useSimpleAuth()
     const { resolveResource, resource } = useResourceResolver()
@@ -19,6 +22,34 @@ export default ({ employee, setEmployees }) => {
     const history = useHistory()
 
 
+    const assignNewLocation = evt => {
+        evt.preventDefault()
+        const lId = parseInt(locationId)
+
+        if (lId === 0) {
+            window.alert("Please select a Location")
+
+        } else if (resource.locations?.find(employeelocation => lId === employeelocation.locationId)){
+            window.alert("Location Already Assigned")
+        
+        } else {
+            const newLocationChoice = {
+                // from state to send to API 
+                locationId: parseInt(locationId),
+                userId: parseInt(resource.id)
+            }
+            EmployeeRepository.assignEmployee(newLocationChoice)
+                .then(resolveResource(employee, employeeId, EmployeeRepository.get))
+            
+        }
+    }
+
+   console.log(resource)
+
+    useEffect(() => {
+        LocationRepository.getAll()
+            .then(setLocations)
+    }, [])
 
     useEffect(() => {
         if (employeeId) {
@@ -32,11 +63,17 @@ export default ({ employee, setEmployees }) => {
         resolveResource(employee, employeeId, EmployeeRepository.get)
     }, [])
 
+
     useEffect(() => {
         if (resource?.employeeLocations?.length > 0) {
             markLocation(resource.employeeLocations[0])
         }
     }, [resource])
+
+
+
+
+
 
     return (
         <article className={classes}>
@@ -69,6 +106,38 @@ export default ({ employee, setEmployees }) => {
                                     return <p key={emplocation.location.id}> {emplocation.location.name}</p>
                                 })}
 
+                            </section>
+                            <section>
+                                <div className="form-group">
+                                    <label htmlFor="location"></label>
+                                    <select
+                                        defaultValue=""
+                                        name="location"
+                                        id="locationId"
+
+                                        onChange={
+                                            (evt) => {
+
+
+                                                setNewLocation(evt.target.value)
+                                            }
+                                        }
+                                    >
+                                        <option value="">Assign a Location</option>
+                                        {newLocation.map(loc => (
+                                            <option key={loc.id} id={loc.id} value={loc.id}>
+                                                {loc.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <button type="submit"
+                                    onClick={assignNewLocation}
+
+                                    className="btn-savelocation"> Save Location</button>
+
+
+
 
                             </section>
                         </>
@@ -91,8 +160,8 @@ export default ({ employee, setEmployees }) => {
                 }
 
 
-            </section>
+            </section >
 
-        </article>
+        </article >
     )
 }
