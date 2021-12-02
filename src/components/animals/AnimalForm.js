@@ -24,6 +24,7 @@ export default (props) => {
     })
     const { getCurrentUser } = useSimpleAuth()
 
+
     useEffect(() => {
         const copy = { ...userChoices }
         const findDemEmployees = employees.find(e => e.id === parseInt(employeeId))
@@ -46,6 +47,11 @@ export default (props) => {
         AnimalOwnerRepository.assignOwner(addedAnimal.id, getCurrentUser().id)
     }
 
+    const constructNewAnimalCaretakers = (addedAnimal) => {
+        AnimalOwnerRepository.assignCaretaker(addedAnimal.id, parseInt(employeeId))
+
+    }
+
     const constructNewAnimal = evt => {
         evt.preventDefault()
         const eId = parseInt(employeeId)
@@ -64,14 +70,22 @@ export default (props) => {
                 breed: breed,
                 locationId: parseInt(locationId)
             }
-            
+            //! Optional chaining renders a blank string if a property doesn't exist when browser first attempts to run the constructNewAnimal function. On the rerender when that state exists, it runs the function again. 
             if(userChoices?.currentEmployee?.employeeLocations?.length === 1) {
             AnimalRepository.addAnimal(caretakerWithOneLocation)
-                .then((addedAnimal)=>{constructNewAnimalOwner(addedAnimal)})
+                .then((addedAnimal)=>{
+                    constructNewAnimalOwner(addedAnimal)
+                    constructNewAnimalCaretakers(addedAnimal)
+                })
+                // .then((addedAnimal)=>{constructNewAnimalCaretakers(addedAnimal)})
                 .then(() => setEnabled(true))
                 .then(() => history.push("/animals"))
         } else {
             AnimalRepository.addAnimal(caretakerWithMultipleLocations)
+            .then((addedAnimal)=>{
+                constructNewAnimalOwner(addedAnimal)
+                constructNewAnimalCaretakers(addedAnimal)
+            })
                 .then(() => setEnabled(true))
                 .then(() => history.push("/animals"))
         }
