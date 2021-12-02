@@ -1,12 +1,17 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import { useHistory } from "react-router"
 import EmployeeRepository from "../../repositories/EmployeeRepository";
+import LocationRepository from "../../repositories/LocationRepository";
 import "./EmployeeForm.css"
+
+
 
 
 export default (props) => {
     const [employee, updateEmployee] = useState()
     const [locations, defineLocations] = useState([])
-
+    const history = useHistory()
+    
     const constructNewEmployee = () => {
         if (employee.locationId === 0) {
             window.alert("Please select a location")
@@ -18,18 +23,24 @@ export default (props) => {
             .then(employee => {
                 EmployeeRepository.assignEmployee({
                     employeeId: employee.id,
-                    locationId: employee.location
+                    employeeName: employee.name,
+                    
                 })
             })
-            .then(() => props.history.push("/employees"))
+            .then(() => history.push("/employees"))
         }
     }
-
     const handleUserInput = (event) => {
         const copy = {...employee}
         copy[event.target.id] = event.target.value
         updateEmployee(copy)
     }
+
+    useEffect(() => {
+      LocationRepository.getAll()
+            .then(defineLocations)
+    }, [])
+
 
 
     return (
