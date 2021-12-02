@@ -1,9 +1,12 @@
 import React, { useState, useContext, useEffect } from "react"
 import "./AnimalForm.css"
 import AnimalRepository from "../../repositories/AnimalRepository";
+import AnimalOwnerRepository from "../../repositories/AnimalOwnerRepository";
 import EmployeeRepository from "../../repositories/EmployeeRepository";
 import LocationRepository from "../../repositories/LocationRepository";
 import { useHistory } from "react-router";
+import useSimpleAuth from "../../hooks/ui/useSimpleAuth";
+
 
 
 export default (props) => {
@@ -19,6 +22,7 @@ export default (props) => {
     const [userChoices, setUserChoices] = useState({
         currentEmployee: {}
     })
+    const { getCurrentUser } = useSimpleAuth()
 
     useEffect(() => {
         const copy = { ...userChoices }
@@ -38,6 +42,10 @@ export default (props) => {
             .then(setLocations)
     }, [])
 
+    const constructNewAnimalOwner = (addedAnimal) => {
+        AnimalOwnerRepository.assignOwner(addedAnimal.id, getCurrentUser().id)
+    }
+
     const constructNewAnimal = evt => {
         evt.preventDefault()
         const eId = parseInt(employeeId)
@@ -45,23 +53,25 @@ export default (props) => {
         if (eId === 0) {
             window.alert("Please select a caretaker")
         } else {
-            const oneAnimal = {
+            const caretakerWithOneLocation = {
                 name: animalName,
                 breed: breed,
                 locationId: parseInt(userChoices.currentEmployee.employeeLocations[0].locationId)
             }
 
-            const mulitpleAnimal = {
+            const caretakerWithMultipleLocations = {
                 name: animalName,
                 breed: breed,
                 locationId: parseInt(locationId)
             }
+            
             if(userChoices?.currentEmployee?.employeeLocations?.length === 1) {
-            AnimalRepository.addAnimal(oneAnimal)
+            AnimalRepository.addAnimal(caretakerWithOneLocation)
+                .then((addedAnimal)=>{constructNewAnimalOwner(addedAnimal)})
                 .then(() => setEnabled(true))
                 .then(() => history.push("/animals"))
         } else {
-            AnimalRepository.addAnimal(mulitpleAnimal)
+            AnimalRepository.addAnimal(caretakerWithMultipleLocations)
                 .then(() => setEnabled(true))
                 .then(() => history.push("/animals"))
         }
