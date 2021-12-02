@@ -1,10 +1,18 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import locationImage from "./location.png"
 import "./Location.css"
+import LocationRepository from "../../repositories/LocationRepository"
 
 
-export default ({location}) => {
+export default ({ location }) => {
+    const [currentLocation, setLocation] = useState([])
+
+    useEffect(() => {
+        LocationRepository.get(location.id)
+            .then(setLocation)
+    }, [])
+
     return (
         <article className="card location" style={{ width: `18rem` }}>
             <section className="card-body">
@@ -20,10 +28,10 @@ export default ({location}) => {
                 </h5>
             </section>
             <section>
-                Total animals
+                Total animals: {currentLocation.animals?.length}
             </section>
             <section>
-                Total locations
+                Total employees: {currentLocation.employeeLocations?.length}
             </section>
         </article>
     )
