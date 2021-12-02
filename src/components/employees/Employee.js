@@ -17,7 +17,7 @@ export default ({ employee, setEmployees }) => {
     const { resolveResource, resource } = useResourceResolver()
     const [isEmployee, setAuth] = useState(false)
     const history = useHistory()
-   
+
 
 
     useEffect(() => {
@@ -68,7 +68,7 @@ export default ({ employee, setEmployees }) => {
                                 Working at {resource?.locations?.map(emplocation => {
                                     return <p key={emplocation.location.id}> {emplocation.location.name}</p>
                                 })}
-                                
+
 
                             </section>
                         </>
@@ -76,18 +76,18 @@ export default ({ employee, setEmployees }) => {
                 }
                 {
                     isEmployee
-                    ?
-                    <button className="btn--fireEmployee" onClick={() => {
-                        EmployeeRepository.delete(resource.id)
-                        .then(()=>{
-                          EmployeeRepository.getAll()
-                          .then(setEmployees)
-                          .then(()=> {
-                              history.push("/employees")
-                          })
-                        })
-                    }}>Fire</button>
-                    :""
+                        ?
+                        <button className="btn--fireEmployee" onClick={() => {
+                            EmployeeRepository.delete(resource.id)
+                                .then(() => {
+                                    EmployeeRepository.getAll()
+                                        .then(setEmployees)
+                                        .then(() => {
+                                            history.push("/employees")
+                                        })
+                                })
+                        }}>Fire</button>
+                        : ""
                 }
 
 
