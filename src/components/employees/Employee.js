@@ -28,6 +28,10 @@ export default ({ employee, setEmployees }) => {
 
         if (lId === 0) {
             window.alert("Please select a Location")
+
+        } else if (resource.locations?.find(employeelocation => lId === employeelocation.locationId)){
+            window.alert("Location Already Assigned")
+        
         } else {
             const newLocationChoice = {
                 // from state to send to API 
@@ -35,10 +39,12 @@ export default ({ employee, setEmployees }) => {
                 userId: parseInt(resource.id)
             }
             EmployeeRepository.assignEmployee(newLocationChoice)
-                .then(setEmployees)
+                .then(resolveResource(employee, employeeId, EmployeeRepository.get))
+            
         }
     }
 
+   console.log(resource)
 
     useEffect(() => {
         LocationRepository.getAll()
@@ -56,6 +62,7 @@ export default ({ employee, setEmployees }) => {
         setAuth(getCurrentUser().employee)
         resolveResource(employee, employeeId, EmployeeRepository.get)
     }, [])
+
 
     useEffect(() => {
         if (resource?.employeeLocations?.length > 0) {
@@ -158,5 +165,3 @@ export default ({ employee, setEmployees }) => {
         </article >
     )
 }
-
-
