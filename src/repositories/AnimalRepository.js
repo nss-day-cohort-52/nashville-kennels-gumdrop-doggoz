@@ -29,6 +29,9 @@ export default {
     async searchByName(query) {
         return await fetchIt(`${Settings.remoteURL}/animals?_expand=employee&_sort=employee.id&_embed=treatments&_expand=location&name_like=${query}`)
     },
+    async getCaretakers() {
+        return await fetchIt(`${Settings.remoteURL}/animalCaretakers?_expand=user&_expand=animal`)
+    },
     async delete(id) {
         return await fetchIt(`${Settings.remoteURL}/animals/${id}`, "DELETE")
     },
@@ -62,6 +65,13 @@ export default {
     async updateAnimal(editedAnimal) {
         return await fetchIt(
             `${Settings.remoteURL}/animals/${editedAnimal.id}`,
+            "PUT",
+            JSON.stringify(editedAnimal)
+        )
+    },
+    async updateCaretaker(editedAnimal) {
+        return await fetchIt(
+            `${Settings.remoteURL}/animalcaretakers/${editedAnimal.id}`,
             "PUT",
             JSON.stringify(editedAnimal)
         )

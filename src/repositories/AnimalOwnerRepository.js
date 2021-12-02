@@ -37,6 +37,10 @@ export default {
         const e = await fetch(`${Settings.remoteURL}/animalOwners?animalId=${animalId}&_expand=user`)
         return await e.json()
     },
+    async getCaretakersByAnimal (animalId) {
+        const e = await fetch(`${Settings.remoteURL}/animalCaretakers?animalId=${animalId}&_expand=user`)
+        return await e.json()
+    },
     
     async assignOwner(animalId, userId) {
         const e = await fetch(`${Settings.remoteURL}/animalOwners`, {
@@ -49,8 +53,26 @@ export default {
         })
         return await e.json()
     },
+    async assignCaretaker(animalId, userId) {
+        const e = await fetch(`${Settings.remoteURL}/animalCaretakers`, {
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("kennel_token")}`
+            },
+            "body": JSON.stringify({ animalId, userId })
+        })
+        return await e.json()
+    },
     async getAll() {
         const e = await fetch(`${Settings.remoteURL}/animalOwners?_expand=user&user.employee=false&_expand=animal`)
         return await e.json()
+    },
+    
+    async removeCaretaker(animalId, caretakerId) {
+        return await fetchIt(`${Settings.remoteURL}/animalCaretakers/?userId=${caretakerId}&animalId=${animalId}`)
+            .then((caretakerArray) => {
+                 fetchIt(`${Settings.remoteURL}/animalCaretakers/${caretakerArray[0].id}`, "DELETE")
+            })
     }
 }
