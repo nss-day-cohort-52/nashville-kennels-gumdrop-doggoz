@@ -9,6 +9,7 @@ export default ({ location }) => {
     const [currentLocation, setLocation] = useState([])
 
     useEffect(() => {
+        //get individual location with embedded animals and employees
         LocationRepository.get(location.id)
             .then(setLocation)
     }, [])
