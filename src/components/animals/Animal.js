@@ -115,13 +115,22 @@ export const Animal = ({ animal, syncAnimals,
                                 {
                                     currentAnimal?.animalCaretakers?.map(animalCaretaker => {
 
-                                        return <div key={`taker--${animalCaretaker.id}`}>{animalCaretaker.user.name}</div>
+                                        return <div key={`taker--${animalCaretaker.id}`}>{animalCaretaker.user.name}
+                                        <button key= {animalCaretaker.id} className={animalCaretaker.id} onClick={() => {
+                                            AnimalOwnerRepository
+                                                .removeCaretaker(currentAnimal.id, animalCaretaker.userId)
+                                                .then(() => {
+                                                    AnimalRepository.getAll()
+                                                        .then(syncAnimals)
+                                                }) // Get all animals
+                                        }}> Remove caretaker </button>
+                                        </div>
                                     }
                                     )
                                 }
-                                {getCurrentUser().employee
+                                {/* {getCurrentUser().employee
                                     ?
-                                    myCaretaker.length >= 1
+                                    myCaretaker.length > 0
                                         ?
                                         <button className="" onClick={() => {
                                             AnimalOwnerRepository
@@ -133,13 +142,13 @@ export const Animal = ({ animal, syncAnimals,
                                         }}> Remove caretaker </button>
                                         : ""
                                     : ""
-                                }
+                                } */}
                                 {/* iterate through animalCaretakers array and return the user.name for each caretaker of currentAnimal  */}
                                 {
 
                                     getCurrentUser().employee
                                         ?
-                                        myCaretaker.length < 1
+                                        myCaretaker.length < 2
                                             ?
                                             <select defaultValue=""
                                                 name="caretaker"

@@ -68,14 +68,11 @@ export default {
         const e = await fetch(`${Settings.remoteURL}/animalOwners?_expand=user&user.employee=false&_expand=animal`)
         return await e.json()
     },
-    async removeCaretakers(animalId) {
-        return AnimalRepository.get(animalId)
-            .then(animal => {
-                
-                const employeeDeletes = animal.animalCaretakers.map(
-                    c => fetchIt(`${Settings.remoteURL}/animalCaretakers/${c.id}`, "DELETE")
-                )
-                return Promise.all(employeeDeletes)
+    
+    async removeCaretaker(animalId, caretakerId) {
+        return await fetchIt(`${Settings.remoteURL}/animalCaretakers/?userId=${caretakerId}&animalId=${animalId}`)
+            .then((caretakerArray) => {
+                 fetchIt(`${Settings.remoteURL}/animalCaretakers/${caretakerArray[0].id}`, "DELETE")
             })
-    },
+    }
 }
