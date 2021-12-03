@@ -1,6 +1,5 @@
 import Settings from "./Settings"
 import { fetchIt } from "./Fetch"
-import { useImperativeHandle } from "react"
 
 export default {
     async get(id) {
@@ -12,7 +11,8 @@ export default {
                 userWithRelationships.animals = data
                 return userWithRelationships
             })
-
+        // returns a user object with embedded employeeLocations(which has expanded location and user) 
+        // and animalCaretakers(which has expanded animals)
         
     },
     async delete(id) {

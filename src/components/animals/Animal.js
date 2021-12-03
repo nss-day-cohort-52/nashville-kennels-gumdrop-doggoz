@@ -9,30 +9,33 @@ import "./AnimalCard.css"
 
 export const Animal = ({ animal, syncAnimals,
     showTreatmentHistory, owners }) => {
-    const [detailsOpen, setDetailsOpen] = useState(false)
-    const [isEmployee, setAuth] = useState(false)
+    const [users, setUsers] = useState([])
     const [myOwners, setPeople] = useState([])
     const [allOwners, registerOwners] = useState([])
+    const [allCaretakers, setCaretakers] = useState([])
+    const [myCaretakers, setMyCaretaker] = useState([])
+    const [isEmployee, setAuth] = useState(false)
+    const [detailsOpen, setDetailsOpen] = useState(false)
     const [classes, defineClasses] = useState("card animal")
     const { getCurrentUser } = useSimpleAuth()
     const history = useHistory()
     const { animalId } = useParams()
     const { resolveResource, resource: currentAnimal } = useResourceResolver()
-    const [users, setUsers] = useState([])
-    const [caretakers, setCaretakers] = useState([])
-    const [myCaretaker, setMyCaretaker] = useState([])
 
     useEffect(() => {
         setAuth(getCurrentUser().employee)
-        // setter (property, param, getter) .get is expanding to users table
-        resolveResource(animal, animalId, AnimalRepository.get)
+        //getAll is coming from OwnerRepository component - fetching all users
+        OwnerRepository.getAll()
+            .then(setUsers)
+            .then(() => OwnerRepository.getAllEmployees())
+            .then(setCaretakers)
+            // setter (property, param, getter) .get is expanding to users table
+            .then(() => resolveResource(animal, animalId, AnimalRepository.get))
     }, [])
+
     useEffect(() => {
-
-        // setter (property, param, getter) .get is expanding to users table
-        resolveResource(animal, animalId, AnimalRepository.get)
-    }, [myOwners])
-
+        resolveResource(animal)
+    }, [myOwners, animal])
 
     useEffect(() => {
         if (owners) {
@@ -40,33 +43,10 @@ export const Animal = ({ animal, syncAnimals,
         }
     }, [owners])
 
-    //getAll is coming from OwnerRepository component - fetching all users
-    useEffect(() => {
-        OwnerRepository.getAll()
-            .then(setUsers)
-    }, [])
-    useEffect(() => {
-        OwnerRepository.getAllEmployees()
-            .then(setCaretakers)
-    }, []
-
-    )
-
-    const getPeople = () => {
-        return AnimalOwnerRepository
-            .getOwnersByAnimal(currentAnimal.id)
-            .then(people => setPeople(people))
-    }
-    const getCaretakers = () => {
-        return AnimalOwnerRepository
-            .getCaretakersByAnimal(currentAnimal.id)
-            .then(people => setMyCaretaker(people))
-    }
-
     useEffect(() => {
         getPeople()
         getCaretakers()
-    }, [currentAnimal, animal])
+    }, [currentAnimal])
 
     useEffect(() => {
         if (animalId) {
@@ -79,6 +59,18 @@ export const Animal = ({ animal, syncAnimals,
                 })
         }
     }, [animalId])
+
+
+    const getPeople = () => {
+        return AnimalOwnerRepository
+            .getOwnersByAnimal(currentAnimal.id)
+            .then(people => setPeople(people))
+    }
+    const getCaretakers = () => {
+        return AnimalOwnerRepository
+            .getCaretakersByAnimal(currentAnimal.id)
+            .then(people => setMyCaretaker(people))
+    }
 
     return (
         <>
@@ -114,31 +106,30 @@ export const Animal = ({ animal, syncAnimals,
                             <span className="small">
                                 {
                                     getCurrentUser().employee
-                                    ?
-                                    currentAnimal?.animalCaretakers?.map(animalCaretaker => {
+                                        ?
+                                        currentAnimal?.animalCaretakers?.map(animalCaretaker => {
 
-                                        return <div key={`taker--${animalCaretaker.id}`}>{animalCaretaker.user.name}
-                                        
-                                        <button key= {animalCaretaker.id} className={animalCaretaker.id} onClick={() => {
-                                            AnimalOwnerRepository
-                                                .removeCaretaker(currentAnimal.id, animalCaretaker.userId)
-                                                .then(() => {
-                                                    AnimalRepository.getAll()
-                                                        .then(syncAnimals)
-                                                }) // Get all animals
-                                        }}> Remove caretaker </button>
-                                        </div>
-                                    }
-                                    )
-                                    :""
+                                            return <div key={`taker--${animalCaretaker.id}`}>{animalCaretaker.user.name}
+
+                                                <button key={animalCaretaker.id} className={animalCaretaker.id} onClick={() => {
+                                                    AnimalOwnerRepository
+                                                        .removeCaretaker(currentAnimal.id, animalCaretaker.userId)
+                                                        .then(() => {
+                                                            AnimalRepository.getAll()
+                                                                .then(syncAnimals)
+                                                        }) // Get all animals
+                                                }}> Remove caretaker </button>
+                                            </div>
+                                        }
+                                        )
+                                        : ""
                                 }
-                               
+
                                 {/* iterate through animalCaretakers array and return the user.name for each caretaker of currentAnimal  */}
                                 {
-
                                     getCurrentUser().employee
                                         ?
-                                        myCaretaker.length < 2
+                                        myCaretakers.length < 2
                                             ?
                                             <select defaultValue=""
                                                 name="caretaker"
@@ -153,7 +144,7 @@ export const Animal = ({ animal, syncAnimals,
                                                     Select a new caretaker
                                                 </option>
                                                 {
-                                                    caretakers.map(ct => <option key={ct.id} value={ct.id}>{ct.name}</option>)
+                                                    allCaretakers.map(ct => <option key={ct.id} value={ct.id}>{ct.name}</option>)
                                                 }
                                             </select>
 

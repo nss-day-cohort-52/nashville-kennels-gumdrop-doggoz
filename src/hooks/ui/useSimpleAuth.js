@@ -3,9 +3,12 @@ import Settings from "../../repositories/Settings"
 
 const useSimpleAuth = () => {
 
+    //returns boolean of true if a user exists in local or session storage
     const isAuthenticated = () => localStorage.getItem("kennel_token") !== null
         || sessionStorage.getItem("kennel_token") !== null
 
+    //posts to users API, then encodes the parsed response and sets it as a token in the local storage
+    //used for registering new users
     const register = (user) => {
         return fetch(`${Settings.remoteURL}/users`, {
             method: "POST",
@@ -24,6 +27,9 @@ const useSimpleAuth = () => {
         })
     }
 
+    //gets user object(s) using the email string argument. If parsed response has one or more objects, encodes
+    //the parsed response and sets it as a token in the local storage. Returns true. Otherwise, returns false.
+    //used for logging in users
     const login = (email) => {
         return fetch(`${Settings.remoteURL}/users?email=${email}`, {
             method: "GET",
@@ -43,12 +49,18 @@ const useSimpleAuth = () => {
         })
     }
 
+    //removes tokens from local and session storage
+    //used for logging users out
     const logout = () => {
         console.log("*** Toggling auth state and removing credentials ***")
         localStorage.removeItem("kennel_token")
         sessionStorage.removeItem("kennel_token")
     }
 
+    //unencodes and parses the user token, then creates and object from it.
+    //thus returning a user object.
+    //Object.assign takes a target and a source as arguments. Target (Object.create(null)) is a new empty object.
+    //source is the new info from the unencoded and parsed token.
     const getCurrentUser = () => {
         const encoded = localStorage.getItem("kennel_token")
         const unencoded = Buffer.from(encoded, "base64").toString("utf8")
@@ -57,7 +69,8 @@ const useSimpleAuth = () => {
         return bare
     }
 
+    //return functions from parent function in the form of an object?
     return { isAuthenticated, logout, login, register, getCurrentUser }
 }
-
+//default allows function to be imported as any name into another component/module
 export default useSimpleAuth

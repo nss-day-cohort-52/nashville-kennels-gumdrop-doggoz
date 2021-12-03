@@ -12,7 +12,7 @@ export default ({ location }) => {
         //get individual location with embedded animals and employees
         LocationRepository.get(location.id)
             .then(setLocation)
-    }, [])
+    }, [location.id])
 
     return (
         <article className="card location" style={{ width: `18rem` }}>

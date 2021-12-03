@@ -2,7 +2,9 @@ import Settings from "./Settings"
 import { fetchIt } from "./Fetch"
 
 export default {
+    // async function
     async get(id) {
+        // await response of fetch call, only return once promise is resolved
         return await fetchIt(`${Settings.remoteURL}/users/${id}`)
     },
     async createAccount(user) {
