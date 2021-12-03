@@ -15,7 +15,7 @@ export const LocationList = ({ matchingLocations }) => {
             LocationRepository.getAll()
                 .then(updateLocations)
         }
-
+    // eslint-disable-next-line
     }, [])
 
     useEffect(() => {

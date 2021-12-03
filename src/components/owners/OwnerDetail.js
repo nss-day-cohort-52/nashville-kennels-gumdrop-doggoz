@@ -10,6 +10,9 @@ export default class OwnerDetail extends Component {
             user clicked on by looking at the `this.props.animals`
             collection that was passed down from ApplicationViews
         */
+
+        //?What is the above referring to? We don't call this in ApplicationViews or any of the Route modules.
+
         const animal = this.props.animals.find(a =>
             a.id === parseInt(this.props.match.params.animalId))
              || {id:404, name:"404", breed: "Dog not found"}

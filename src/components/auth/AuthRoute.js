@@ -2,6 +2,8 @@ import React from "react"
 import { Route, Redirect } from "react-router-dom"
 import useSimpleAuth from "../../hooks/ui/useSimpleAuth"
 
+//Not understanding what this component would be for. It is not currently used.
+//Would it be to reauthenticate a user every time you navigate to a certain component?
 const AuthRoute = ({ path, component: TargetComponent }) => {
     const { isAuthenticated } = useSimpleAuth()
 

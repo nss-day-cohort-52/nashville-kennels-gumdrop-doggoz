@@ -1,4 +1,6 @@
+//? What's tsx? typescript?
 export const OxfordList = (resources: Array<Object>, namespace: string) => {
+    //? Syntax of this is confusing. Having trouble following it overall.
 
     const propArray: Array<string> = namespace.split(".")
 

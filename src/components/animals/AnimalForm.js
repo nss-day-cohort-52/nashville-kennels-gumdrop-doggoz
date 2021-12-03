@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import "./AnimalForm.css"
 import AnimalRepository from "../../repositories/AnimalRepository";
 import AnimalOwnerRepository from "../../repositories/AnimalOwnerRepository";
@@ -10,86 +10,79 @@ import useSimpleAuth from "../../hooks/ui/useSimpleAuth";
 
 
 export default (props) => {
-    const [animalName, setName] = useState("")
-    const [breed, setBreed] = useState("")
-    const [animals, setAnimals] = useState([])
     const [employees, setEmployees] = useState([])
     const [locations, setLocations] = useState([])
-    const [employeeId, setEmployeeId] = useState(0)
-    const [locationId, setLocationId] = useState(0)
+    const { getCurrentUser } = useSimpleAuth()
     const [saveEnabled, setEnabled] = useState(false)
     const history = useHistory()
     const [userChoices, setUserChoices] = useState({
-        currentEmployee: {}
+        currentEmployee: {},
+        animalName: "",
+        breed: "",
+        employeeId: 0,
+        locationId: 0
     })
-    const { getCurrentUser } = useSimpleAuth()
-
-
-    useEffect(() => {
-        const copy = { ...userChoices }
-        const findDemEmployees = employees.find(e => e.id === parseInt(employeeId))
-        console.log(findDemEmployees)
-        copy.currentEmployee = findDemEmployees
-        setUserChoices(copy)
-    }, [employeeId])
 
     useEffect(() => {
         EmployeeRepository.getAll()
             .then(setEmployees)
+            .then(() => LocationRepository.getAll())
+            .then(setLocations)
     }, [])
 
     useEffect(() => {
-        LocationRepository.getAll()
-            .then(setLocations)
-    }, [])
+        const copy = { ...userChoices }
+        copy.currentEmployee = employees.find(emp => emp.id === parseInt(userChoices.employeeId))
+        setUserChoices(copy)
+    }, [userChoices.employeeId, employees])
+
 
     const constructNewAnimalOwner = (addedAnimal) => {
         AnimalOwnerRepository.assignOwner(addedAnimal.id, getCurrentUser().id)
     }
 
     const constructNewAnimalCaretakers = (addedAnimal) => {
-        AnimalOwnerRepository.assignCaretaker(addedAnimal.id, parseInt(employeeId))
-
+        AnimalOwnerRepository.assignCaretaker(addedAnimal.id, parseInt(userChoices.employeeId))
     }
 
     const constructNewAnimal = evt => {
         evt.preventDefault()
-        const eId = parseInt(employeeId)
+        const eId = parseInt(userChoices.employeeId)
 
         if (eId === 0) {
             window.alert("Please select a caretaker")
         } else {
             const caretakerWithOneLocation = {
-                name: animalName,
-                breed: breed,
+                name: userChoices.animalName,
+                breed: userChoices.breed,
                 locationId: parseInt(userChoices.currentEmployee.employeeLocations[0].locationId)
             }
 
             const caretakerWithMultipleLocations = {
-                name: animalName,
-                breed: breed,
-                locationId: parseInt(locationId)
+                name: userChoices.animalName,
+                breed: userChoices.breed,
+                locationId: parseInt(userChoices.locationId)
             }
-            //! Optional chaining renders a blank string if a property doesn't exist when browser first attempts to run the constructNewAnimal function. On the rerender when that state exists, it runs the function again. 
-            if(userChoices?.currentEmployee?.employeeLocations?.length === 1) {
-            AnimalRepository.addAnimal(caretakerWithOneLocation)
-                .then((addedAnimal)=>{
-                    constructNewAnimalOwner(addedAnimal)
-                    constructNewAnimalCaretakers(addedAnimal)
-                })
-                // .then((addedAnimal)=>{constructNewAnimalCaretakers(addedAnimal)})
-                .then(() => setEnabled(true))
-                .then(() => history.push("/animals"))
-        } else {
-            AnimalRepository.addAnimal(caretakerWithMultipleLocations)
-            .then((addedAnimal)=>{
-                constructNewAnimalOwner(addedAnimal)
-                constructNewAnimalCaretakers(addedAnimal)
-            })
-                .then(() => setEnabled(true))
-                .then(() => history.push("/animals"))
+            // Optional chaining renders a blank string if a property doesn't exist when browser first attempts to run the constructNewAnimal function. On the rerender when that state exists, it runs the function again. 
+            if (userChoices?.currentEmployee?.employeeLocations?.length === 1) {
+                AnimalRepository.addAnimal(caretakerWithOneLocation)
+                    .then((addedAnimal) => {
+                        constructNewAnimalOwner(addedAnimal)
+                        constructNewAnimalCaretakers(addedAnimal)
+                    })
+                    .then(() => setEnabled(true))
+                    .then(() => history.push("/animals"))
+            } else {
+                AnimalRepository.addAnimal(caretakerWithMultipleLocations)
+                    .then((addedAnimal) => {
+                        constructNewAnimalOwner(addedAnimal)
+                        constructNewAnimalCaretakers(addedAnimal)
+                    })
+                    .then(() => setEnabled(true))
+                    .then(() => history.push("/animals"))
+            }
         }
-    }} 
+    }
 
     return (
         <form className="animalForm">
@@ -101,7 +94,11 @@ export default (props) => {
                     required
                     autoFocus
                     className="form-control"
-                    onChange={e => setName(e.target.value)}
+                    onChange={event => {
+                        const copy = { ...userChoices }
+                        copy.animalName = event.target.value
+                        setUserChoices(copy)
+                    }}
                     id="animalName"
                     placeholder="Animal name"
                 />
@@ -112,7 +109,11 @@ export default (props) => {
                     type="text"
                     required
                     className="form-control"
-                    onChange={e => setBreed(e.target.value)}
+                    onChange={event => {
+                        const copy = { ...userChoices }
+                        copy.breed = event.target.value
+                        setUserChoices(copy)
+                    }}
                     id="breed"
                     placeholder="Breed"
                 />
@@ -124,7 +125,11 @@ export default (props) => {
                     name="employee"
                     id="employeeId"
                     className="form-control"
-                    onChange={e => setEmployeeId(e.target.value)
+                    onChange={event => {
+                        const copy = { ...userChoices }
+                        copy.employeeId = event.target.value
+                        setUserChoices(copy)
+                    }
                     }
                 >
                     <option value="">Select an employee</option>
@@ -144,8 +149,11 @@ export default (props) => {
                             name="location"
                             id="locationId"
                             className="form-control"
-                            onChange={e => setLocationId(e.target.value)
-                            }
+                            onChange={event => {
+                                const copy = { ...userChoices }
+                                copy.locationId = event.target.value
+                                setUserChoices(copy)
+                            }}
                         >
                             <option value="">Select a Location</option>
                             {locations.map(e => (

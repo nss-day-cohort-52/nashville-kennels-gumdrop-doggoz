@@ -7,8 +7,8 @@ import "./Location.css"
 
 
 export default () => {
-    const [animals, setAnimals] = useState([])
-    const [employees, updateEmployees] = useState([])
+    // const [animals, setAnimals] = useState([])
+    // const [employees, updateEmployees] = useState([])
     const [location, set] = useState({animals:[], employeeLocations: []})
 
     const { locationId } = useParams()
@@ -25,8 +25,10 @@ export default () => {
                 <p className="lead detailCard__lead">
                     Currently caring for
                     {
+                        //.map takes (element, index, array) as parameters.
                         location.animals.map((a, idx, arr) =>
                             <span key={idx}>
+                                {/* //? Need help with this syntax. Does this add a comma before each item following index 0?  */}
                                 {idx > 0 && ", "}
                                 <Link to={`/animals/${a.id}`}> {a.name}</Link>
                             </span>

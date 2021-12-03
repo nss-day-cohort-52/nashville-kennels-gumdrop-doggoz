@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
 const useResourceResolver = () => {
-
+    //initialize state
     const [resource, setResource] = useState({})
 
     useEffect(() => {
@@ -15,6 +15,7 @@ const useResourceResolver = () => {
         }
         else {
             // If being rendered indepedently (ROUTE PARAMETER)
+            //(used if we are getting a parameter from the router with useParams)
             if (param) {
                 getter(param).then(retrievedResource => {
                     setResource(retrievedResource)
@@ -23,6 +24,8 @@ const useResourceResolver = () => {
         }
     }
 
+    //returns an object, with the first property being a setter function and the second being a variable to hold state from the setter function.
+    //resource will either be from the property parameter in resolveResource or the result of the getter function using the param (also both in the parameters)
     return { resolveResource, resource }
 }
 

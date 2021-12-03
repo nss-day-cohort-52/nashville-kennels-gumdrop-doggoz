@@ -17,6 +17,7 @@ export default ({ matchingEmployees }) => {
                 EmployeeRepository.getAll()
                     .then(setEmployees)
             }
+            // eslint-disable-next-line
         }, []
     )
 
